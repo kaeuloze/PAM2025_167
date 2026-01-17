@@ -54,9 +54,6 @@ fun DashboardScreen(navController: NavController) {
             navController.navigate(Routes.SHIFT)
         }
 
-        DashboardMenu("Jadwal Kru") {
-            navController.navigate(Routes.CREW_SHIFT)
-        }
 
         DashboardMenu("Notifikasi") {
             navController.navigate(Routes.NOTIFICATION)
