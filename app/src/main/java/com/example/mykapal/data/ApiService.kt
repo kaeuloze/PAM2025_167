@@ -9,135 +9,181 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import com.example.mykapal.data.model.*
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.Query
 
 interface ApiService {
 
     /* ================= AUTH ================= */
 
-    @POST("auth/login.php")
+    @POST("login_admin.php")
     suspend fun login(
         @Body body: LoginRequest
     ): LoginResponse
 
 
+    @FormUrlEncoded
+    @POST("login_admin.php")
+    suspend fun login(
+        @Field("username") username: String,
+        @Field("password") password: String
+    ): LoginResponse
+
+
     /* ================= DASHBOARD ================= */
 
+    // Menjadi ini:
     @GET("dashboard/summary.php")
     suspend fun getDashboardSummary(): DashboardSummary
 
 
     /* ================= CREW ================= */
+    // GET ALL CREW
+    @GET("getCrew.php")
+    suspend fun getCrew(): ApiResponse<List<Crew>>
 
-    @GET("crew/getCrew.php")
-    suspend fun getCrew(): List<Crew>
-
-    @POST("crew/insertCrew.php")
+    // INSERT CREW
+    @FormUrlEncoded
+    @POST("insertCrew.php")
     suspend fun insertCrew(
-        @Body crew: Crew
-    ): Response<ApiResponse>
+        @Field("nama_lengkap") namaLengkap: String,
+        @Field("jenis_kelamin") jenisKelamin: String,
+        @Field("tanggal_lahir") tanggalLahir: String,
+        @Field("kewarganegaraan") kewarganegaraan: String,
+        @Field("posisi") posisi: String,
+        @Field("nomor_passport") nomorPassport: String,
+        @Field("kontak") kontak: String,
+        @Field("alamat") alamat: String
+    ): ApiResponse<Crew>
 
-    @POST("crew/updateCrew.php")
+    // UPDATE CREW
+    @FormUrlEncoded
+    @POST("updateCrew.php")
     suspend fun updateCrew(
-        @Body crew: Crew
-    ): Response<ApiResponse>
+        @Field("crew_id") crewId: Int,
+        @Field("nama_lengkap") namaLengkap: String,
+        @Field("jenis_kelamin") jenisKelamin: String,
+        @Field("tanggal_lahir") tanggalLahir: String,
+        @Field("kewarganegaraan") kewarganegaraan: String,
+        @Field("posisi") posisi: String,
+        @Field("nomor_passport") nomorPassport: String,
+        @Field("kontak") kontak: String,
+        @Field("alamat") alamat: String
+    ): ApiResponse<Crew>
 
-    @POST("crew/deleteCrew.php")
+    // DELETE CREW
+    @FormUrlEncoded
+    @POST("deleteCrew.php")
     suspend fun deleteCrew(
-        @Body body: Map<String, Int>
-    ): Response<ApiResponse>
+        @Field("crew_id") crewId: Int
+    ): ApiResponse<String>
 
 
     /* ================= CERTIFICATION (MASTER) ================= */
 
-    @GET("certification/getCertification.php")
-    suspend fun getCertification(): List<Certification>
+    @GET("getCertification.php")
+    suspend fun getCertification(): ApiResponse<List<Certification>>
 
-    @POST("certification/insertCertification.php")
+    @POST("insertCertification.php")
     suspend fun insertCertification(
         @Body certification: Certification
-    ): Response<ApiResponse>
+    ): ApiResponse<Any>
 
-    @POST("certification/updateCertification.php")
+    @POST("updateCertification.php")
     suspend fun updateCertification(
         @Body certification: Certification
-    ): Response<ApiResponse>
+    ): ApiResponse<Any>
 
-    @POST("certification/deleteCertification.php")
+    @POST("deleteCertification.php")
     suspend fun deleteCertification(
         @Body body: Map<String, Int>
-    ): Response<ApiResponse>
+    ): ApiResponse<Any>
 
 
     /* ================= CREW CERTIFICATION ================= */
 
-    @GET("crew_certification/getCrewCertification.php")
-    suspend fun getCrewCertification(): List<CrewCertification>
+    @GET("getCrewCertification.php")
+    suspend fun getCrewCertification(): ApiResponse<List<CrewCertification>>
 
-    @POST("crew_certification/insertCrewCertification.php")
+    @FormUrlEncoded
+    @POST("insertCrewCertification.php")
     suspend fun insertCrewCertification(
-        @Body data: CrewCertification
-    ): Response<ApiResponse>
+        @Field("crew_cert_id") crewCertId: Int,
+        @Field("crew_id") crewId: Int,
+        @Field("certification_id") certificationId: Int,
+        @Field("nama_sertifikasi") namaSertifikasi: String,
+        @Field("kru") kru: String,
+        @Field("tanggal_terbit") tanggalTerbit: String,
+        @Field("tanggal_kadaluarsa") tanggalKadaluarsa: String,
+        @Field("status") status: String
+    ): ApiResponse<CrewCertification>
 
-    @POST("crew_certification/updateCrewCertification.php")
+    @FormUrlEncoded
+    @POST("updateCrewCertification.php")
     suspend fun updateCrewCertification(
-        @Body data: CrewCertification
-    ): Response<ApiResponse>
+        @Field("crew_cert_id") crewCertId: Int,
+        @Field("crew_id") crewId: Int,
+        @Field("certification_id") certificationId: Int,
+        @Field("nama_sertifikasi") namaSertifikasi: String,
+        @Field("kru") kru: String,
+        @Field("tanggal_terbit") tanggalTerbit: String,
+        @Field("tanggal_kadaluarsa") tanggalKadaluarsa: String,
+        @Field("status") status: String
+    ): ApiResponse<CrewCertification>
 
-    @POST("crew_certification/deleteCrewCertification.php")
+    @FormUrlEncoded
+    @POST("deleteCrewCertification.php")
     suspend fun deleteCrewCertification(
-        @Body body: Map<String, Int>
-    ): Response<ApiResponse>
+        @Field("crew_cert_id") crewCertId: Int
+    ): ApiResponse<String>
 
 
     /* ================= SHIFT ================= */
 
-    @GET("shift/getShift.php")
-    suspend fun getShift(): List<Shift>
+    @GET("getShift.php")
+    suspend fun getShift(): ApiResponse<List<Shift>>
 
-    @POST("shift/insertShift.php")
+    @POST("insertShift.php")
     suspend fun insertShift(
         @Body shift: Shift
-    ): Response<ApiResponse>
+    ): ApiResponse<Shift>
 
-    @POST("shift/updateShift.php")
+    @POST("updateShift.php")
     suspend fun updateShift(
         @Body shift: Shift
-    ): Response<ApiResponse>
+    ): ApiResponse<Shift>
 
-    @POST("shift/deleteShift.php")
+    @POST("deleteShift.php")
     suspend fun deleteShift(
         @Body body: Map<String, Int>
-    ): Response<ApiResponse>
+    ): ApiResponse<String>
 
 
     /* ================= CREW SHIFT ================= */
 
-    @GET("crew_shift/getCrewShift.php")
-    suspend fun getCrewShift(): List<CrewShift>
+    @GET("getCrewShift.php")
+    suspend fun getCrewShift(): ApiResponse<List<CrewShift>>  // ← DIUBAH!
 
-    @POST("crew_shift/insertCrewShift.php")
+    @POST("insertCrewShift.php")
     suspend fun insertCrewShift(
         @Body data: CrewShift
-    ): Response<ApiResponse>
+    ): ApiResponse<CrewShift>
 
-    @POST("crew_shift/updateCrewShift.php")
+    @POST("updateCrewShift.php")
     suspend fun updateCrewShift(
         @Body data: CrewShift
-    ): Response<ApiResponse>
+    ): ApiResponse<CrewShift>
 
-    @POST("crew_shift/deleteCrewShift.php")
+    @POST("deleteCrewShift.php")
     suspend fun deleteCrewShift(
         @Body body: Map<String, Int>
-    ): Response<ApiResponse>
+    ): ApiResponse<String>
 
 
     /* ================= NOTIFICATION ================= */
 
-    @GET("notification/getNotification.php")
-    suspend fun getNotifications(): List<NotificationModel>
+    @GET("getNotification.php")
+    suspend fun getNotifications(): List<NotificationModel>  // ← DIUBAH!
+
 }
-
-
-
-
-

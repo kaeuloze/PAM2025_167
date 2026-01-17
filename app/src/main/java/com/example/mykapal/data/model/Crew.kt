@@ -1,5 +1,8 @@
 package com.example.mykapal.data.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Crew(
     val crew_id: Int,
     val nama_lengkap: String,

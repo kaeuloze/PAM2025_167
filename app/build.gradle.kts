@@ -69,6 +69,9 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation("androidx.compose.material:material-icons-core")
 
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
 
     // Library tambahan untuk ikon yang lebih lengkap (termasuk ArrowBack)
     implementation("androidx.compose.material:material-icons-extended")

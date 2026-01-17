@@ -1,5 +1,9 @@
 package com.example.mykapal.data.model
 
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CrewCertification(
     val crew_cert_id: Int = 0,
     val crew_id: Int = 0,

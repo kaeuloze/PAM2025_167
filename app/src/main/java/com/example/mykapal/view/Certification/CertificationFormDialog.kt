@@ -1,18 +1,20 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.mykapal.view.Certification
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.example.mykapal.data.model.Certification
 
 @Composable
@@ -21,45 +23,90 @@ fun CertificationFormDialog(
     onDismiss: () -> Unit,
     onSave: (Certification) -> Unit
 ) {
+    // Pastikan nama field ini sesuai model kamu:
+    // - data?.namaSertifikasi
+    // - data?.deskripsi
     var nama by remember { mutableStateOf(data?.namaSertifikasi ?: "") }
     var deskripsi by remember { mutableStateOf(data?.deskripsi ?: "") }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(if (data == null) "Tambah Sertifikasi" else "Edit Sertifikasi") },
-        text = {
-            Column {
+    // ===== VALIDATION =====
+    val namaOk = nama.trim().isNotEmpty()
+    // deskripsi biasanya boleh kosong, tapi kalau backend kamu wajibkan, ubah jadi:
+    // val deskripsiOk = deskripsi.trim().isNotEmpty()
+    val deskripsiOk = true
+
+    val isFormValid = namaOk && deskripsiOk
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 520.dp)
+                .padding(16.dp),
+            shape = MaterialTheme.shapes.large
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = if (data == null) "Tambah Sertifikasi" else "Edit Sertifikasi",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+
                 OutlinedTextField(
                     value = nama,
                     onValueChange = { nama = it },
                     label = { Text("Nama Sertifikasi") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = { Icon(Icons.Default.Badge, null) },
+                    isError = !namaOk && nama.isNotBlank(),
+                    supportingText = {
+                        if (!namaOk && nama.isNotBlank()) Text("Nama sertifikasi wajib diisi")
+                    }
                 )
+
                 OutlinedTextField(
                     value = deskripsi,
                     onValueChange = { deskripsi = it },
                     label = { Text("Deskripsi") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 80.dp),
+                    maxLines = 4,
+                    leadingIcon = { Icon(Icons.Default.Description, null) }
                 )
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                onSave(
-                    Certification(
-                        sertif_id = data?.sertif_id ?: 0,
-                        namaSertifikasi = nama,
-                        deskripsi = deskripsi
-                    )
-                )
-            }) {
-                Text("Simpan")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Batal")
+
+                Spacer(Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(onClick = onDismiss) { Text("Batal") }
+                    Spacer(Modifier.width(8.dp))
+
+                    Button(
+                        onClick = {
+                            val payload = Certification(
+                                sertif_id = data?.sertif_id ?: 0,
+                                namaSertifikasi = nama.trim(),
+                                deskripsi = deskripsi.trim()
+                            )
+                            onSave(payload)
+                        },
+                        enabled = isFormValid
+                    ) {
+                        Icon(Icons.Default.Edit, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(if (data == null) "Simpan" else "Update")
+                    }
+                }
             }
         }
-    )
+    }
 }
